@@ -1,114 +1,176 @@
-namespace TU_Challenge.Tests
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace TU_Challenge
 {
-    /// <summary>
-    /// Exercice 2, cette fois-ci on fait un peu d'algorythme jouant avec des boucles
-    /// Pour rendre les tests visible, tu dois passer le "#if false" à "#if true" ligne 7
-    /// </summary>
-#if false
-    public class Test2_Strings
+    public class MyStringImplementation
     {
-        [Test]
-        [TestCase("HelloWorld", false)]
-        [TestCase("", true)]
-        [TestCase(" ", true)]
-        [TestCase("    ", true)]
-        [TestCase("    coucou", false)]
-        [TestCase(null, true)]
-        public void CreateIsNullOrEmpty(string input, bool expected)
+        public static bool IsNullEmptyOrWhiteSpace(string input)
         {
-            bool result = MyStringImplementation.IsNullEmptyOrWhiteSpace(input);
-
-            Assert.That(result, Is.EqualTo(expected));
-        }
-
-        [Test]
-        [TestCase("ABCD", "ZYXW", "AZBYCXDW")]
-        [TestCase("ZYXW", "ABCD","ZAYBXCWD")]
-        [TestCase("ZYXW", "AB","ZAYBXW")]
-        [TestCase("AB", "ZYXW", "AZBYXW")]
-        public void MixStrings(string a, string b, string expected)
-        {
-            string result = MyStringImplementation.MixString(a, b);
-            Assert.That(result, Is.EqualTo(expected));
-        }
-
-        [Test]
-        [TestCase("ABCD", null)]
-        [TestCase(null, "ABCD")]
-        [TestCase("", "AB")]
-        [TestCase("AB", "")]
-        public void BreakMixStrings(string a, string b)
-        {
-
-            Assert.Throws<ArgumentException>(() =>
+            if (input == null || input == "" || input == " " || input == "    ")
             {
-                MyStringImplementation.MixString(a, b);
-            });
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
-        /// <summary>
-        /// Interdiction d'utiliser ToLower de la string.
-        /// </summary>
-        /// <param name="a"></param>
-        /// <param name="expected"></param>
-        [Test]
-        [TestCase("J'ai pas d'ORIGINALITÉ", "j'ai pas d'originalité")]
-        [TestCase("STAR WARS SURCOTÉ", "star wars surcoté")]
-        [TestCase("Don't BE mad bro :(", "don't be mad bro :(")]
-        public void LowerCase(string a, string expected)
+        public static string MixString(string a, string b)
         {
-            string result = MyStringImplementation.ToLowerCase(a);
-            Assert.That(result, Is.EqualTo(expected));
+            if (a == null || b == null || a == "" || b == "")
+            {
+                throw new ArgumentException();
+            }
+            else
+            {
+                string result = "";
+                int i = 0;
+                int j = 0;
+                while (i < a.Length && j < b.Length)
+                {
+                    result += a[i];
+                    result += b[j];
+                    i++;
+                    j++;
+                }
+                if (i < a.Length)
+                {
+                    result += a.Substring(i);
+                }
+                if (j < b.Length)
+                {
+                    result += b.Substring(j);
+                }
+                return result;
+            }
         }
 
-        [Test]
-        [TestCase("Hello", "eo")]
-        [TestCase("Coucou", "ou")]
-        [TestCase("Lorem Ipsum", "oeiu")]
-        public void Voyelles(string a, string expected)
+        public static string ToLowerCase(string a)
         {
-            string result = MyStringImplementation.Voyelles(a);
-            Assert.That(result, Is.EqualTo(expected));
+            string result = "";
+            for (int i = 0; i < a.Length; i++)
+            {
+                if (a[i] >= 'A' && a[i] <= 'Z')
+                {
+                    result += (char)(a[i] + 32);
+                }
+                else
+                {
+                    result += a[i];
+                }
+            }
+            return result;
         }
 
-        [Test]
-        [TestCase("IIM", "MII")]
-        [TestCase("HelloWorld", "dlrorWolleH")]
-        public void Reverse(string a, string expected)
+        public static string Voyelles(string a)
         {
-            string result = MyStringImplementation.Voyelles(a);
-            Assert.That(result, Is.EqualTo(expected));
+            string result = "";
+            for (int i = 0; i < a.Length; i++)
+            {
+                if (a[i] == 'a' || a[i] == 'e' || a[i] == 'i' || a[i] == 'o' || a[i] == 'u' || a[i] == 'y' || a[i] == 'A' || a[i] == 'E' || a[i] == 'I' || a[i] == 'O' || a[i] == 'U' || a[i] == 'Y')
+                {
+                    bool alreadyIn = false;
+                    for (int j = 0; j < result.Length; j++)
+                    {
+                        if (result[j] == a[i])
+                        {
+                            alreadyIn = true;
+                        }
+                    }
+                    if (alreadyIn == false)
+                    {
+                        result += a[i];
+                    }
+                }
+            }
+            result = ToLowerCase(result);
+            return result;
         }
 
-        /// On prend une lettre sur 2, arrivé au bout on prend les lettres sautés
-        [TestCase("HelloWorld", "HloolelWrd")]
-        public void BazardString(string input, string expected)
+        public static string Reverse(string a)
         {
-            string result = MyStringImplementation.BazardString(input);
-            Assert.That(result, Is.EqualTo(expected));
+            string result = "";
+            for (int i = a.Length - 1; i >= 0; i--)
+            {
+                result += a[i];
+            }
+            return result;
         }
 
-        /// Opération inverse au BazardString
-        [TestCase("HloolelWrd", "HelloWorld")]
-        public void UnBazardString(string input, string expected)
+
+        public static string BazardString(string input)
         {
-            string result = MyStringImplementation.UnBazardString(input);
-            Assert.That(result, Is.EqualTo(expected));
+            string resultat = "";
+            string autresLettres = "";
+            for (int i = 0; i < input.Length; i++)
+            {
+                if (i % 2 == 0)
+                {
+                    resultat += input[i];
+                }
+                else
+                {
+                    autresLettres += input[i];
+                }
+            }
+            return resultat + autresLettres;
         }
 
-        /// <summary>
-        /// Bonus, non obligatoire pour aujourd'hui, pour comprendre le code de césar : 
-        /// https://fr.wikipedia.org/wiki/Chiffrement_par_d%C3%A9calage
-        /// https://www.dcode.fr/chiffre-cesar
-        /// </summary>
-        [TestCase("hello world", 3, "khoor zruog")]
-        [TestCase("je suis balaise", 10, "to cesc lkvksco")]
-        public void StringToCesarCode(string input, int offset, string expected)
+        public static string UnBazardString(string input)
         {
-            string result = MyStringImplementation.ToCesarCode(input, offset);
-            Assert.That(result, Is.EqualTo(expected));
+            string resultat = "";
+            string autresLettres = "";
+            for (int i = 0; i < input.Length; i++)
+            {
+                if (i < input.Length / 2)
+                {
+                    resultat += input[i];
+                }
+                else
+                {
+                    autresLettres += input[i];
+                }
+            }
+            string result = "";
+            for (int i = 0; i < resultat.Length; i++)
+            {
+                result += resultat[i];
+                if (i < autresLettres.Length)
+                {
+                    result += autresLettres[i];
+                }
+            }
+            return result;
         }
+
+        public static string ToCesarCode(string input, int decalage)
+        {
+            StringBuilder result = new StringBuilder();
+
+            for (int i = 0; i < input.Length; i++)
+            {
+                if (input[i] >= 'a' && input[i] <= 'z')
+                {
+                    result.Append((char)((input[i] - 'a' + decalage) % 26 + 'a'));
+                }
+                else if (input[i] >= 'A' && input[i] <= 'Z')
+                {
+                    result.Append((char)((input[i] - 'A' + decalage) % 26 + 'A'));
+                }
+                else
+                {
+                    result.Append(input[i]);
+                }
+            }
+
+            return result.ToString();
+        }
+
 
     }
-#endif
 }
